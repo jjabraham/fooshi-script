@@ -17,12 +17,8 @@ echo '############# install typescript ##################'
 npm install typescript --save-dev
 npm install @types/node --save-dev
 
-npx tsc --init --rootDir src --outDir build \
---esModuleInterop --resolveJsonModule --lib es6 \
---module commonjs --allowJs true --noImplicitAny true
-
-echo '############# intstall ts-node-dev ##################'
-npm install --save-dev ts-node-dev
+echo '############# intstall ts-node ##################'
+npm install --save-dev ts-node
 
 
 echo '############# intstall linting libraries ##################'
@@ -39,6 +35,32 @@ npm install --save-dev --save-exact prettier
 touch .prettierignore
 
 npm install --save-dev eslint-config-prettier
+
+
+echo '############# writing to tsconfig.json ##################'
+echo '{
+  "extends": "ts-node/node12/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
+  },
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["es6"],
+    "allowJs": true,
+    "sourceMap": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}' > tsconfig.json
+
 
 echo '############# writing to .eslintrc ##################'
 echo '{
@@ -87,7 +109,7 @@ npx npm-add-script \
 
 npx npm-add-script \
   -k "start:dev" \
-  -v "tsnd --transpile-only --ignore-watch node_modules src/index.ts" \
+  -v "ts-node --project tsconfig.json --files src/server.ts" \
   --force
 
 npx npm-add-script \
